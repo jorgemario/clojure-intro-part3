@@ -1,17 +1,6 @@
 (ns clojure-intro-part3.core
   (:use bakery.core))
 
-(defn perform [step]
-  (cond
-    (= :cool (first step))
-    (cool-pan)
-    (= :mix (first step))
-    (mix)
-    (= :pour (first step))
-    (pour-into-pan)
-    (= :bake (first step))
-    (bake-pan (second step))))
-
 (def baking {:recipes {:cake {:ingredients {:egg 2 :flour 2 :milk 1 :sugar 1}
                               :steps [[:add :all]
                                       [:mix]
@@ -246,6 +235,30 @@
                      :address (:address order)
                      :rackids racks}]
         (delivery receipt)))))
+
+(defn perform [recipe step]
+  (cond
+    (= :cool (first step))
+    (cool-pan)
+    (= :mix (first step))
+    (mix)
+    (= :pour (first step))
+    (pour-into-pan)
+    (= :bake (first step))
+    (bake-pan (second step))
+    (= :add (first step))
+    (cond
+      (= 2 (count (rest step)))
+      (apply add (rest step))
+      (contains? (:ingredients recipe) (second step))
+      (add (second step) ((second step) (:ingredients recipe)))
+      (= [:all] (rest step))
+      (doseq [[ingredient amount] (:ingredients recipe)]
+        (add ingredient amount))
+      :else
+      (error "Unable to perform the add step" step))
+    :else
+    (error "I do not know how to" (first step))))
 
 (defn -main
   [& args]
