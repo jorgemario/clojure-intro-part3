@@ -27,7 +27,7 @@
                                           [:cool]]}}
              :ingredients {:egg {:storage :fridge
                                  :usage :squeezed}
-                           :milk {:storate :fridge
+                           :milk {:storage :fridge
                                   :usage :scooped}
                            :butter {:storage :fridge
                                     :usage :simple}
