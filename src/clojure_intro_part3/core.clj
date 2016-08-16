@@ -7,10 +7,24 @@
                                       [:pour]
                                       [:bake 25]
                                       [:cool]]}
-                       :cookies {:ingredients {}
-                                 :steps []}
-                       :brownies {:ingredients {}
-                                  :steps []}}})
+                       :cookies {:ingredients {:egg 1 :flour 1 :butter 1 :sugar 1}
+                                 :steps [[:add :all]
+                                         [:mix]
+                                         [:pour]
+                                         [:bake 30]
+                                         [:cool]]}
+                       :brownies {:ingredients {:butter 2 :sugar 1 :cocoa 2 :flour 2 :egg 2 :milk 1}
+                                  :steps [[:add :butter]
+                                          [:add :sugar]
+                                          [:add :cocoa]
+                                          [:mix]
+                                          [:add :flour]
+                                          [:add :egg]
+                                          [:add :milk]
+                                          [:mix]
+                                          [:pour]
+                                          [:bake 35]
+                                          [:cool]]}}})
 
 (defn error [& rs]
   (apply println rs)
