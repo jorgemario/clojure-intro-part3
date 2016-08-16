@@ -260,6 +260,10 @@
     :else
     (error "I do not know how to" (first step))))
 
+(defn bake-recipe [recipe]
+  (last (for [step (:steps recipe)]
+          (perform recipe step))))
+
 (defn -main
   [& args]
   (day-at-the-bakery))
