@@ -112,48 +112,6 @@
 (defn from-fridge? [ingredient]
   (contains? fridge-ingredients ingredient))
 
-(defn fetch-from-pantry
-  ([ingredient]
-   (fetch-from-pantry ingredient 1))
-  ([ingredient amount]
-   (if (from-pantry? ingredient)
-     (do
-       (go-to :pantry)
-       (dotimes [i amount]
-         (load-up ingredient))
-       (go-to :prep-area)
-       (dotimes [i amount]
-         (unload ingredient)))
-     (error ingredient " not in pantry area"))))
-
-(defn fetch-from-fridge
-  ([ingredient]
-   (fetch-from-fridge ingredient 1))
-  ([ingredient amount]
-   (if (from-fridge? ingredient)
-     (do
-       (go-to :fridge)
-       (dotimes [i amount]
-         (load-up ingredient))
-       (go-to :prep-area)
-       (dotimes [i amount]
-         (unload ingredient)))
-     (error ingredient " not in fridge area"))))
-
-(defn fetch-ingredient
-  ([ingredient]
-   (fetch-ingredient ingredient 1))
-  ([ingredient amount]
-   (cond
-     (from-fridge? ingredient)
-     (fetch-from-fridge ingredient amount)
-     
-     (from-pantry? ingredient)
-     (fetch-from-pantry ingredient amount)
-
-     :else
-     (error "Unable to fetch ingredient" ingredient))))
-
 (defn load-up-amount [ingredient amount]
   (dotimes [i amount]
     (load-up ingredient)))
@@ -161,6 +119,15 @@
 (defn unload-amount [ingredient amount]
   (dotimes [i amount]
     (unload ingredient)))
+
+(defn fetch-ingredient
+  ([ingredient]
+   (fetch-ingredient ingredient 1))
+  ([ingredient amount]
+   (go-to (:storage (ingredient (:ingredients baking))))
+   (load-up-amount ingredient amount)
+   (go-to :prep-area)
+   (unload-amount ingredient amount)))
 
 (defn fetch-list [shopping-list]
   (doseq [[location ingredients] {:pantry pantry-ingredients
@@ -172,6 +139,34 @@
   (go-to :prep-area)
   (doseq [[ingredient amount] shopping-list]
     (unload-amount ingredient amount)))
+
+(defn perform [recipe step]
+  (cond
+    (= :cool (first step))
+    (cool-pan)
+    (= :mix (first step))
+    (mix)
+    (= :pour (first step))
+    (pour-into-pan)
+    (= :bake (first step))
+    (bake-pan (second step))
+    (= :add (first step))
+    (cond
+      (= 2 (count (rest step)))
+      (apply add (rest step))
+      (contains? (:ingredients recipe) (second step))
+      (add (second step) ((second step) (:ingredients recipe)))
+      (= [:all] (rest step))
+      (doseq [[ingredient amount] (:ingredients recipe)]
+        (add ingredient amount))
+      :else
+      (error "Unable to perform the add step" step))
+    :else
+    (error "I do not know how to" (first step))))
+
+(defn bake-recipe [recipe]
+  (last (for [step (:steps recipe)]
+          (perform recipe step))))
 
 (defn bake [item]
   (bake-recipe (item (:recipes baking))))
@@ -206,34 +201,6 @@
                      :address (:address order)
                      :rackids racks}]
         (delivery receipt)))))
-
-(defn perform [recipe step]
-  (cond
-    (= :cool (first step))
-    (cool-pan)
-    (= :mix (first step))
-    (mix)
-    (= :pour (first step))
-    (pour-into-pan)
-    (= :bake (first step))
-    (bake-pan (second step))
-    (= :add (first step))
-    (cond
-      (= 2 (count (rest step)))
-      (apply add (rest step))
-      (contains? (:ingredients recipe) (second step))
-      (add (second step) ((second step) (:ingredients recipe)))
-      (= [:all] (rest step))
-      (doseq [[ingredient amount] (:ingredients recipe)]
-        (add ingredient amount))
-      :else
-      (error "Unable to perform the add step" step))
-    :else
-    (error "I do not know how to" (first step))))
-
-(defn bake-recipe [recipe]
-  (last (for [step (:steps recipe)]
-          (perform recipe step))))
 
 (defn -main
   [& args]
