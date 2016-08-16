@@ -96,44 +96,6 @@
       :else
       (error "I do not have the ingredient" ingredient))))
 
-(defn bake-cake []
-  (add :egg 2)
-  (add :flour 2)
-  (add :milk 1)
-  (add :sugar 1)
-
-  (mix)
-
-  (pour-into-pan)
-  (bake-pan 25)
-  (cool-pan))
-
-(defn bake-cookies []
-  (add :egg 1)
-  (add :flour 1)
-  (add :butter 1)
-  (add :sugar 1)
-
-  (mix)
-
-  (pour-into-pan)
-  (bake-pan 30)
-  (cool-pan))
-
-(defn bake-brownies []
-  (add :butter 2)
-  (add :sugar 1)
-  (add :cocoa 2)
-  (mix)
-  (add :flour 2)
-  (add :egg 2)
-  (add :milk 1)
-  (mix)
-
-  (pour-into-pan)
-  (bake-pan 35)
-  (cool-pan))
-
 (def pantry-ingredients #{:sugar :flour :cocoa})
 
 (defn from-pantry? [ingredient]
@@ -217,11 +179,8 @@
           [ingredient (* times amount)])))
 
 (defn order->ingredients [order]
-  (add-ingredients
-   (multiply-ingredients {:butter 2 :sugar 1 :cocoa 2 :flour 2 :egg 2 :milk 1} (:brownies (:items order) 0))
-   (add-ingredients
-    (multiply-ingredients {:egg 2 :flour 2 :milk 1 :sugar 1} (:cake (:items order) 0))
-    (multiply-ingredients {:egg 1 :flour 1 :sugar 1 :butter 1} (:cookies (:items order) 0)))))
+  (reduce add-ingredients (for [[item quantity] (:items order)]
+                            (multiply-ingredients (:ingredients (item (:recipes baking))) quantity))))
 
 (defn orders->ingredients [orders]
   (reduce add-ingredients (map order->ingredients orders)))
@@ -272,5 +231,5 @@
 
 (defn -main
   [& args]
-  (bake :cake))
+  (day-at-the-bakery))
 
