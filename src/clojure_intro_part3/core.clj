@@ -95,6 +95,20 @@
   (bake-pan 30)
   (cool-pan))
 
+(defn bake-brownies []
+  (add :butter 2)
+  (add :sugar 1)
+  (add :cocoa 2)
+  (mix)
+  (add :flour 2)
+  (add :egg 2)
+  (add :milk 1)
+  (mix)
+
+  (pour-into-pan)
+  (bake-pan 35)
+  (cool-pan))
+
 (def pantry-ingredients #{:sugar :flour :cocoa})
 
 (defn from-pantry? [ingredient]
