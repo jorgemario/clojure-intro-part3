@@ -24,7 +24,19 @@
                                           [:mix]
                                           [:pour]
                                           [:bake 35]
-                                          [:cool]]}}})
+                                          [:cool]]}}
+             :ingredients {:egg {:storage :fridge
+                                 :usage :squeezed}
+                           :milk {:storate :fridge
+                                  :usage :scooped}
+                           :butter {:storage :fridge
+                                    :usage :simple}
+                           :flour {:storage :pantry
+                                   :usage :scooped}
+                           :sugar {:storage :pantry
+                                   :usage :scooped}
+                           :cocoa {:storage :pantry
+                                   :usage :scooped}}})
 
 (defn error [& rs]
   (apply println rs)
