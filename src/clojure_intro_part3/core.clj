@@ -1,6 +1,11 @@
 (ns clojure-intro-part3.core
   (:use bakery.core))
 
+(defn perform [step]
+  (when
+    (= :cool (first step))
+    (cool-pan)))
+
 (def baking {:recipes {:cake {:ingredients {:egg 2 :flour 2 :milk 1 :sugar 1}
                               :steps [[:add :all]
                                       [:mix]
