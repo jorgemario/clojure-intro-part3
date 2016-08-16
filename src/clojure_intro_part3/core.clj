@@ -5,7 +5,7 @@
   (apply println rs)
   :error)
 
-(def scooped-ingredients #{:milk :sugar :flour})
+(def scooped-ingredients #{:milk :sugar :flour :cocoa})
 
 (defn scooped? [ingredient]
   (contains? scooped-ingredients ingredient))
@@ -95,7 +95,7 @@
   (bake-pan 30)
   (cool-pan))
 
-(def pantry-ingredients #{:sugar :flour})
+(def pantry-ingredients #{:sugar :flour :cocoa})
 
 (defn from-pantry? [ingredient]
   (contains? pantry-ingredients ingredient))
