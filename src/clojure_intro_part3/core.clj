@@ -192,15 +192,7 @@
     (unload-amount ingredient amount)))
 
 (defn bake [item]
-  (cond
-    (= :cake item)
-    (bake-cake)
-    (= :cookies item)
-    (bake-cookies)
-    (= :brownies item)
-    (bake-brownies)
-    :else
-    (error "Don't know how to bake" item)))
+  (bake-recipe (item (:recipes baking))))
 
 (defn add-ingredients [a b]
   (merge-with + a b))
@@ -266,5 +258,5 @@
 
 (defn -main
   [& args]
-  (day-at-the-bakery))
+  (bake :cake))
 
