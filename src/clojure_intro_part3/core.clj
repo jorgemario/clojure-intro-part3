@@ -102,16 +102,6 @@
       :else
       (error "I do not have the ingredient" ingredient))))
 
-(def pantry-ingredients #{:sugar :flour :cocoa})
-
-(defn from-pantry? [ingredient]
-  (contains? pantry-ingredients ingredient))
-
-(def fridge-ingredients #{:egg :milk :butter})
-
-(defn from-fridge? [ingredient]
-  (contains? fridge-ingredients ingredient))
-
 (defn load-up-amount [ingredient amount]
   (dotimes [i amount]
     (load-up ingredient)))
@@ -130,15 +120,18 @@
    (unload-amount ingredient amount)))
 
 (defn fetch-list [shopping-list]
-  (doseq [[location ingredients] {:pantry pantry-ingredients
-                                 :fridge fridge-ingredients}]
-    (go-to location)
-    (doseq [ingredient ingredients]
-      (load-up-amount ingredient (ingredient shopping-list 0))))
- 
-  (go-to :prep-area)
-  (doseq [[ingredient amount] shopping-list]
-    (unload-amount ingredient amount)))
+  (let [with-storage (for [[ingredient amount] shopping-list]
+                       {:name ingredient
+                        :amount amount
+                        :storage (:storage (ingredient (:ingredients baking)))})]
+    (doseq [[location ingredients] (group-by :storage with-storage)]
+      (go-to location)
+      (doseq [ingredient ingredients]
+        (load-up-amount (:name ingredient) (:amount ingredient))))
+    
+    (go-to :prep-area)
+      (doseq [[ingredient amount] shopping-list]
+        (unload-amount ingredient amount))))
 
 (defn perform [recipe step]
   (cond
