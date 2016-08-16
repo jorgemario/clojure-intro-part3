@@ -181,12 +181,13 @@
     (unload-amount ingredient amount)))
 
 (defn bake [item]
-  (println "bake" item)
   (cond
     (= :cake item)
     (bake-cake)
     (= :cookies item)
     (bake-cookies)
+    (= :brownies item)
+    (bake-brownies)
     :else
     (error "Don't know how to bake" item)))
 
@@ -200,8 +201,10 @@
 
 (defn order->ingredients [order]
   (add-ingredients
-   (multiply-ingredients {:egg 2 :flour 2 :milk 1 :sugar 1} (:cake (:items order) 0))
-   (multiply-ingredients {:egg 1 :flour 1 :sugar 1 :butter 1} (:cookies (:items order) 0))))
+   (multiply-ingredients {:butter 2 :sugar 1 :cocoa 2 :flour 2 :egg 2 :milk 1} (:brownies (:items order) 0))
+   (add-ingredients
+    (multiply-ingredients {:egg 2 :flour 2 :milk 1 :sugar 1} (:cake (:items order) 0))
+    (multiply-ingredients {:egg 1 :flour 1 :sugar 1 :butter 1} (:cookies (:items order) 0)))))
 
 (defn orders->ingredients [orders]
   (reduce add-ingredients (map order->ingredients orders)))
@@ -216,9 +219,7 @@
       (let [items (:items order)
             racks (for [[item amount] items
                         i (range amount)]
-                    (do
-                      (println item i)
-                      (bake item)))
+                    (bake item))
             receipt {:orderid (:orderid order)
                      :address (:address order)
                      :rackids racks}]
