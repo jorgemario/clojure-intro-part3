@@ -2,9 +2,11 @@
   (:use bakery.core))
 
 (defn perform [step]
-  (when
+  (cond
     (= :cool (first step))
-    (cool-pan)))
+    (cool-pan)
+    (= :mix (first step))
+    (mix)))
 
 (def baking {:recipes {:cake {:ingredients {:egg 2 :flour 2 :milk 1 :sugar 1}
                               :steps [[:add :all]
