@@ -42,20 +42,14 @@
   (apply println rs)
   :error)
 
-(def scooped-ingredients #{:milk :sugar :flour :cocoa})
-
 (defn scooped? [ingredient]
-  (contains? scooped-ingredients ingredient))
-
-(def squeezed-ingredients #{:egg})
+  (= :scooped (:usage (ingredient (:ingredients baking)))))
 
 (defn squeezed? [ingredient]
-  (contains? squeezed-ingredients ingredient))
-
-(def simple-ingredients #{:butter})
+  (= :squeezed (:usage (ingredient (:ingredients baking)))))
 
 (defn simple? [ingredient]
-  (contains? simple-ingredients ingredient))
+  (= :simple (:usage (ingredient (:ingredients baking)))))
 
 (defn add-squeezed
   ([ingredient]
