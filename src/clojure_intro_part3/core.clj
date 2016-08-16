@@ -52,7 +52,7 @@
                        (dotimes [i amount]
                          (scoop ingredient)
                          (add-to-bowl))
-                       (release :cup))})
+                       (release))})
 
 (defn error [& rs]
   (apply println rs)
@@ -97,29 +97,24 @@
       (doseq [[ingredient amount] shopping-list]
         (unload-amount ingredient amount))))
 
+(def actions {:cool (fn [recipe] (cool-pan))
+              :mix (fn [recipe] (mix))
+              :pour (fn [recipe] (pour-into-pan))
+              :bake (fn [recipe min] (bake min))
+              :add (fn
+                     ([recipe ingredient]
+                      (cond
+                        (= :all ingredient)
+                        (doseq [[ingredient amount] (:ingredients recipe)]
+                          (add ingredient amount))
+                        (contains? (:ingredients recipe) ingredient)
+                        (add ingredient (ingredient (:ingredients recipe)))))
+                     ([recipe ingredient amount]
+                      (add ingredient amount)))})
+
 (defn perform [recipe step]
-  (cond
-    (= :cool (first step))
-    (cool-pan)
-    (= :mix (first step))
-    (mix)
-    (= :pour (first step))
-    (pour-into-pan)
-    (= :bake (first step))
-    (bake-pan (second step))
-    (= :add (first step))
-    (cond
-      (= 2 (count (rest step)))
-      (apply add (rest step))
-      (contains? (:ingredients recipe) (second step))
-      (add (second step) ((second step) (:ingredients recipe)))
-      (= [:all] (rest step))
-      (doseq [[ingredient amount] (:ingredients recipe)]
-        (add ingredient amount))
-      :else
-      (error "Unable to perform the add step" step))
-    :else
-    (error "I do not know how to" (first step))))
+  (let [f (get actions (first step))]
+    (apply f recipe (rest step))))
 
 (defn bake-recipe [recipe]
   (last (for [step (:steps recipe)]
