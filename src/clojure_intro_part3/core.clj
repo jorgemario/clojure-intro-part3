@@ -1,6 +1,17 @@
 (ns clojure-intro-part3.core
   (:use bakery.core))
 
+(def baking {:recipes {:cake {:ingredients {:egg 2 :flour 2 :milk 1 :sugar 1}
+                              :steps [[:add :all]
+                                      [:mix]
+                                      [:pour]
+                                      [:bake 25]
+                                      [:cool]]}
+                       :cookies {:ingredients {}
+                                 :steps []}
+                       :brownies {:ingredients {}
+                                  :steps []}}})
+
 (defn error [& rs]
   (apply println rs)
   :error)
